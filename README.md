@@ -33,7 +33,7 @@ To use this pipeline, ensure that the following dependencies are installed:
 2. conda install -c conda-forge rdkit
 
 ### Other Required Installations
-1. Open Babel: Used for molecular file conversions. Installation Guide
+1. Open Babel: Used for molecular file conversions. [Installation Guide](https://openbabel.org/docs/index.html)
 
 ### Required Input Files
 **1. Protein Sequence Files (.fasta) –** Used for structure prediction, alignment, and parametrization.
@@ -42,12 +42,12 @@ To use this pipeline, ensure that the following dependencies are installed:
 
 **3. Ligand Structure Files (.sdf) –** Converted to .pdbqt format for docking.
    
-_'''These files can be downloaded from:
-UniProt Database (https://www.uniprot.org/),
+_'These files can be downloaded from:_
+_UniProt Database (https://www.uniprot.org/),_
 
-NCBI Protein Database (https://www.ncbi.nlm.nih.gov/protein/),
+_NCBI Protein Database (https://www.ncbi.nlm.nih.gov/protein/),_
 
-PubChem (https://pubchem.ncbi.nlm.nih.gov/)'''_
+_PubChem (https://pubchem.ncbi.nlm.nih.gov/)'_
 
 ## Pipeline Workflow
 <img width="1497" alt="Screenshot 2025-03-18 at 5 13 35 PM" src="https://github.com/user-attachments/assets/1d6a8ebc-8147-470a-a284-ddfd89279406" />
@@ -57,9 +57,9 @@ conda activate esmfold
 
 python esm_fold.py "/path/to/torch_home" "/path/to/protein.fasta"
 
-_**Input:** FASTA sequence
+_**Input:** FASTA sequence_
 
-**Output:** .pdb file of the predicted 3D protein structure
+_**Output:** .pdb file of the predicted 3D protein structure_
 
 ### Step 2: Structural Analysis Using PyMOL
 Open pymol_.py and modify the script to include the path to the generated .pdb file.
@@ -104,8 +104,7 @@ python /path/to/convert_pdb_to_pdbqt.py /path/to/protein.pdb /output/path/protei
 
 python /path/to/convert_sdf_to_pdbqt.py /path/to/ligand.sdf /output/path/ligand.pdbqt
 
-_**Output:** Ligand and protein files formatted for docking.
-_
+_**Output:** Ligand and protein files formatted for docking._
 
 ### Step 6: Running AutoDock Vina for Docking
 
