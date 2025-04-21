@@ -1,125 +1,102 @@
-# Protein Analysis and Docking Pipeline
+# Protein Structure Prediction and Docking Pipeline
 
-## Introduction
+This repository presents a modular bioinformatics pipeline designed to streamline protein analysis from sequence to docking. It combines deep learning-based structure prediction, sequence analysis, binding pocket identification, and small-molecule docking in a single, reproducible framework.
 
-The Protein Analysis and Docking Pipeline is an integrated suite of bioinformatics tools designed to simplify and enhance protein structural and functional analysis. It provides an end-to-end computational framework for analyzing protein sequences, predicting structures, visualizing ligand-binding pockets, and performing docking studies. This pipeline supports a wide range of molecular biology and biochemical research applications.
+## Project Overview
+This pipeline empowers researchers to:
+- Predict 3D structures from FASTA sequences using ESMfold
+- Compute physicochemical properties with ProtParam
+- Align sequences using Clustal Omega
+- Detect binding pockets via fPockets
+- Convert and prepare molecular files for docking
+- Perform protein-ligand docking using AutoDock Vina
 
-By leveraging tools such as ESMfold, ProtParam, Clustal-Omega, fPockets, and AutoDock Vina, the pipeline enables researchers to:
-1. Predict the 3D structure of proteins from amino acid sequences.
-2. Compute physicochemical properties of proteins.
-3. Perform multiple sequence alignment to identify conserved regions.
-4. Identify potential ligand-binding sites in protein structures.
-5. Prepare input files for docking simulations.
-6. Run small-molecule blind docking between a protein and a ligand of interest.
+## Required Tools & Dependencies
 
-## Installation and Usage (For End-Users)
+### Tools & Resources
+| Tool | Purpose | Link |
+|------|---------|------|
+| **ESMfold** | 3D protein structure prediction | [GitHub](https://github.com/facebookresearch/esm) |
+| **ProtParam (via Biopython)** | Compute protein properties | [Docs](https://biopython.org/docs/1.76/api/Bio.SeqUtils.ProtParam.html) |
+| **Clustal Omega** | Multiple sequence alignment | [Clustal Omega](https://www.ebi.ac.uk/Tools/msa/clustalo/) |
+| **fPockets** | Ligand-binding site prediction | - |
+| **AutoDock Vina** | Protein-ligand docking | [Vina GitHub](https://github.com/ccsb-scripps/AutoDock-Vina) |
+| **Open Babel** | Molecule format conversion | [Open Babel Docs](https://openbabel.org/docs/index.html) |
 
-To use this pipeline, ensure that the following dependencies are installed:
+### Python Dependencies
+```bash
+pip install termcolor biopython
+conda install -c conda-forge rdkit
+```
 
-### Required Packages
+## Required Input Files
+| File Type | Format | Use |
+|-----------|--------|-----|
+| Protein sequence | `.fasta` | Structure prediction, alignment |
+| Protein structure | `.pdb` | Pocket detection, docking input |
+| Ligand structure  | `.sdf` | Docking input after conversion |
 
-**ESMfold –** Predicts 3D structures of proteins. [Installation Guide](https://github.com/facebookresearch/esm)
+_Get sequences from [UniProt](https://www.uniprot.org/), [NCBI](https://www.ncbi.nlm.nih.gov/protein/), or [PubChem](https://pubchem.ncbi.nlm.nih.gov/) as needed._
 
-**ProtParam –** Computes physicochemical properties of proteins. [Documentation](https://biopython.org/docs/1.76/api/Bio.SeqUtils.ProtParam.html)
+## Workflow Overview
+<img width="1019" alt="Screenshot 2025-04-21 at 4 57 16 PM" src="https://github.com/user-attachments/assets/aa91c53e-cf41-4bcc-a4b2-a3aac63caf76" />
 
-**Clustal-Omega –** Performs multiple sequence alignments. [Installation Guide](https://github.com/facebookresearch/esm)
+## Step-by-Step Execution
 
-**fPockets –** Identifies ligand-binding pockets in protein structures.
-
-**AutoDock Vina –** Performs small-molecule docking. [Installation Guide](https://github.com/facebookresearch/esm)
-
-### Python Dependencies:
-1. pip install termcolor biopython
-2. conda install -c conda-forge rdkit
-
-### Other Required Installations
-1. Open Babel: Used for molecular file conversions. [Installation Guide](https://openbabel.org/docs/index.html)
-
-### Required Input Files
-**1. Protein Sequence Files (.fasta) –** Used for structure prediction, alignment, and parametrization.
-
-**2. Protein Structure Files (.pdb) –** Input for binding pocket identification and docking preparation.
-
-**3. Ligand Structure Files (.sdf) –** Converted to .pdbqt format for docking.
-   
-_'These files can be downloaded from:_
-_UniProt Database (https://www.uniprot.org/),_
-
-_NCBI Protein Database (https://www.ncbi.nlm.nih.gov/protein/),_
-
-_PubChem (https://pubchem.ncbi.nlm.nih.gov/)'_
-
-## Pipeline Workflow
-<img width="1497" alt="Screenshot 2025-03-18 at 5 13 35 PM" src="https://github.com/user-attachments/assets/1d6a8ebc-8147-470a-a284-ddfd89279406" />
-
-### Step 1: Running ESMfold for 3D Structure Prediction
+### Structure Prediction (ESMfold)
+```bash
 conda activate esmfold
-
 python esm_fold.py "/path/to/torch_home" "/path/to/protein.fasta"
+```
+**Input:** FASTA file → **Output:** PDB file
 
-_**Input:** FASTA sequence_
-
-_**Output:** .pdb file of the predicted 3D protein structure_
-
-### Step 2: Structural Analysis Using PyMOL
-Open pymol_.py and modify the script to include the path to the generated .pdb file.
-
-Run the script using:
-
+### Structural Visualization (PyMOL)
+Edit `pymol_.py` to include your `.pdb` file path, then run:
+```bash
 pymol
-
 run /path/to/pymol_.py
+```
+_Output:_ RMSD, B-factors, electrostatic visuals
 
-_**Output:** RMSD scores, B-factor analysis, electrostatic surface visualization._
-
-### Step 3: Running the Main Pipeline
-To run the core pipeline, execute:
-
+### Main Analysis Pipeline
+```bash
 python /path/to/main.py
+```
+Prompts for paths to: docking env, analysis env, scripts, sequence, structure, ligand
 
-_You will be prompted to enter:_
+### Binding Pocket Identification (fPockets)
+```bash
+python run_fpocket.py /path/to/fpocket /path/to/protein.pdb /output/folder
+```
 
-_1.Path to the docking environment_
+### File Conversion for Docking
+```bash
+python convert_pdb_to_pdbqt.py /path/to/protein.pdb /output/protein.pdbqt
+python convert_sdf_to_pdbqt.py /path/to/ligand.sdf /output/ligand.pdbqt
+```
 
-_2.Path to Python analysis environment_
+### Run Docking (AutoDock Vina)
+```bash
+python Docking_.py /path/to/protein.pdbqt /path/to/ligand.pdbqt /path/to/config.txt /output/results.pdbqt
+```
 
-_3.Directory for scripts and results_
+## Key Features & Insights
+- **ESMfold** generates accurate 3D structures from sequence alone
+- **ProtParam** provides essential molecular descriptors
+- **Clustal Omega** highlights conserved domains
+- **fPockets** detects ligand binding sites with spatial accuracy
+- **AutoDock Vina** predicts binding affinity and conformations
 
-_4.Paths to .fasta and .pdb files_
+## Applications
+- Drug target validation
+- Structure-function annotation
+- Ligand docking for rational drug design
+- Structure-based functional prediction
 
-_5.Paths for ligand file preparation_
+## Tech Stack
+- **Languages**: Python, Shell
+- **Libraries**: Biopython, RDKit, PyMOL
+- **Tools**: ESMfold, AutoDock Vina, Open Babel
 
-### Step 4: Running fPockets for Binding Site Identification
-
-python /path/to/run_fpocket.py /path/to/fpocket /path/to/protein.pdb /output/directory
-
-_**Output:** Binding pocket detection results._
-
-### Step 5: Preparing Files for Docking
-1. Convert .pdb to .pdbqt
-
-python /path/to/convert_pdb_to_pdbqt.py /path/to/protein.pdb /output/path/protein.pdbqt
-
-2. Convert .sdf to .pdbqt
-
-python /path/to/convert_sdf_to_pdbqt.py /path/to/ligand.sdf /output/path/ligand.pdbqt
-
-_**Output:** Ligand and protein files formatted for docking._
-
-### Step 6: Running AutoDock Vina for Docking
-
-python /path/to/Docking_.py /path/to/receptor.pdbqt /path/to/ligand.pdbqt /path/to/config.txt /output/path/docking_results.pdbqt
-
-_**Output:** Predicted binding conformations and docking scores._
-
-## Key Insights
-1. ESMfold successfully predicts 3D protein structures, allowing researchers to analyze molecular interactions in-depth.
-2. ProtParam identifies important physicochemical properties such as molecular weight, isoelectric point, and instability index.
-3. Clustal-Omega helps align multiple protein sequences, uncovering conserved functional domains.
-4. fPockets efficiently detects potential ligand-binding sites, providing crucial data for drug discovery.
-5. AutoDock Vina docking simulations predict ligand-receptor interactions, aiding rational drug design.
-
-## Conclusion
-
-The Protein Analysis and Docking Pipeline offers a powerful suite of bioinformatics tools to predict, analyze, and model protein structures and interactions. It integrates cutting-edge computational techniques to streamline protein-ligand docking studies, ultimately advancing research in structural biology and drug discovery.
-
+## License
+MIT License – open to modification, reuse, and extension.
